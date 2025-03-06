@@ -183,8 +183,9 @@ static bool is_head(char c) {
   The snake consists of these characters: "wasd^<v>WASDx"
 */
 static bool is_snake(char c) {
-  // TODO: Implement this function.
-  return true;
+  return (c == 'A' || c == 'W' || c == 'S' || c == 'D' || c == 'x' 
+                    || c == 'a' || c == 's' || c == 'd' || c == 'w'
+                     || c == '<' || c == '>' || c == '^' || c == 'v');
 }
 
 /*
@@ -193,8 +194,20 @@ static bool is_snake(char c) {
   tail ("wasd").
 */
 static char body_to_tail(char c) {
-  // TODO: Implement this function.
-  return '?';
+  switch (c)
+  {
+  case '<':
+    return 'a';
+  case '>':
+    return 'd'; 
+  case 'v':
+    return 's';
+  case '^':
+    return 'w';
+  default:
+    break;
+  }
+  return '\0';
 }
 
 /*
@@ -203,8 +216,20 @@ static char body_to_tail(char c) {
   body ("^<v>").
 */
 static char head_to_body(char c) {
-  // TODO: Implement this function.
-  return '?';
+  switch (c)
+  {
+    case 'A':
+      return '<';
+    case 'W':
+      return '^';
+    case 'S':
+      return 'v';
+    case 'D':
+      return '>';
+    default:
+      break;
+  }
+  return '\0';
 }
 
 /*
@@ -213,9 +238,16 @@ static char head_to_body(char c) {
   Returns cur_row otherwise.
 */
 static unsigned int get_next_row(unsigned int cur_row, char c) {
-  // TODO: Implement this function.
-  return cur_row;
+    switch (c) {
+        case 'v': case 's': case 'S':
+            return cur_row + 1;
+        case '^': case 'w': case 'W':
+            return cur_row - 1;
+        default:
+            return cur_row;
+    }
 }
+
 
 /*
   Returns cur_col + 1 if c is '>' or 'd' or 'D'.
@@ -223,9 +255,16 @@ static unsigned int get_next_row(unsigned int cur_row, char c) {
   Returns cur_col otherwise.
 */
 static unsigned int get_next_col(unsigned int cur_col, char c) {
-  // TODO: Implement this function.
-  return cur_col;
+    switch (c) {
+        case 'd': case 'D': case '>':
+            return cur_col + 1;
+        case 'a': case 'A': case '<':
+            return cur_col - 1;
+        default:
+            return cur_col;
+    }
 }
+
 
 /*
   Task 4.2

@@ -137,27 +137,119 @@ bool test_is_head() {
 }
 
 bool test_is_snake() {
-  // TODO: Implement this function.
+  char valid_body[] = {'a', 'w', 's', 'd', 'A', 'W', 'S', 'D', 'x', '<', '>', '^', 'v'};
+  for (int i = 0; i < 13; i++)
+  {
+    if (!assert_true(&valid_body[i], is_snake(valid_body[i])))
+    {
+      return false;
+    }
+  }
+
+  char invalid_chars[] = {'q', 'i', ' ', '\n', '\0', 'm'};
+  for (int i = 0; i < sizeof(invalid_chars) / sizeof(char); i++)
+  {
+    if (!assert_false(&invalid_chars[i], is_snake(invalid_chars[i])))
+    {
+      return false;
+    }
+  }
   return true;
 }
 
 bool test_body_to_tail() {
-  // TODO: Implement this function.
+  char test_case[] = {'<', '>', 'v', '^'};
+  char expected_results[] = {'a', 'd', 's', 'w'};
+
+  for (int i = 0; i < 4; i++)
+  {
+    char result = body_to_tail(test_case[i]);
+    if (!assert_equals_char(&test_case[i], expected_results[i], result))
+    {
+      return false;
+    }
+  }
+
   return true;
 }
 
 bool test_head_to_body() {
-  // TODO: Implement this function.
+  char test_case[] = {'A', 'S', 'D', 'W'};
+  char expected_results[] = {'<', 'v', '>', '^'};
+
+  for (int i = 0; i < 4; i++)
+  {
+    char result = head_to_body(test_case[i]);
+    if (!assert_equals_char(&test_case[i], expected_results[i], result))
+    {
+      return false;
+    }
+  }
   return true;
 }
 
 bool test_get_next_row() {
-  // TODO: Implement this function.
+  unsigned int currRow = 5;
+  char add_case[] = {'s', 'S', 'v'};
+  for (int i = 0; i < 3; i++) {
+      unsigned int result = get_next_row(currRow, add_case[i]);
+      if (!assert_equals_int("Row should increase", currRow + 1, result)) {
+          return false;
+      }
+  }
+
+  char minus_case[] = {'w', 'W', '^'};
+  for (int i = 0; i < 3; i++) {
+      unsigned int result = get_next_row(currRow, minus_case[i]);
+      if (!assert_equals_int("Row should decrease", currRow - 1, result)) {
+          return false;
+      }
+  }
+
+  char other_case[] = {'a', 'A', 'd', 'D', '>', '<'};
+  for (int i = 0; i < 6; i++) {
+      unsigned int result = get_next_row(currRow, other_case[i]);
+      if (!assert_equals_int("Row should remain unchanged", currRow, result)) {
+          return false;
+      }
+  }
+
   return true;
 }
 
 bool test_get_next_col() {
-  // TODO: Implement this function.
+  unsigned int currCol = 5;
+
+  char add_case[] = {'d', 'D', '>'};
+  for (int i = 0; i < 3; i++) 
+  {
+      unsigned int result = get_next_col(currCol, add_case[i]);
+      if (!assert_equals_int("col should increase", currCol + 1, result)) 
+      {
+          return false;
+      }
+  }
+
+  char minus_case[] = {'a', 'A', '<'};
+  for (int i = 0; i < 3; i++) 
+  {
+      unsigned int result = get_next_col(currCol, minus_case[i]);
+      if (!assert_equals_int("col should decrease", currCol - 1, result)) 
+      {
+          return false;
+      }
+  }
+
+  char other_case[] = {'w', 'W', 's', 'S', '^', 'v'};
+  for (int i = 0; i < 6; i++) 
+  {
+      unsigned int result = get_next_col(currCol, other_case[i]);
+      if (!assert_equals_int("col should remain", currCol, result)) 
+      {
+          return false;
+      }
+  }
+
   return true;
 }
 
