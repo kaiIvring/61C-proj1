@@ -274,8 +274,29 @@ static unsigned int get_next_col(unsigned int cur_col, char c) {
   This function should not modify anything.
 */
 static char next_square(game_t *game, unsigned int snum) {
-  // TODO: Implement this function.
-  return '?';
+  // deal with invalid input.
+  if (!game || snum >= game->num_snakes)
+  {
+    return '#';
+  }
+
+  snake_t *snakes = game->snakes;
+  unsigned int s_row = snakes[snum].head_row;
+  unsigned int s_col = snakes[snum].head_col;
+
+  // get the char of the snake's head
+  char head_char = get_board_at(game, s_row, s_col);
+  // next row and col
+  unsigned int n_row = get_next_row(s_row, head_char);
+  unsigned int n_col = get_next_col(s_col,head_char);
+
+  // boder check!
+  if (n_row >= game->num_rows || n_col >= 20)
+  {
+    return '#';
+  }
+
+  return game->board[n_row][n_col]; 
 }
 
 /*
