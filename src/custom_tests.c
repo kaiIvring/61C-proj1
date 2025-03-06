@@ -97,12 +97,42 @@ bool test_is_vowel() {
 /* Task 4.1 */
 
 bool test_is_tail() {
-  // TODO: Implement this function.
+  char valid_tails[] = {'a', 'w', 's', 'd'};
+  for (int i = 0; i < 4; i++) {
+      if (!assert_true(&valid_tails[i], is_tail(valid_tails[i]))) {
+          return false;
+      }
+  }
+
+  char invalid_chars[] = {'r', 'A', 'W', 'S', 'D', ' ', '*', '#', '\n'};
+  for (int i = 0; i < sizeof(invalid_chars) / sizeof(char); i++) {
+      if (!assert_false(&invalid_chars[i], is_tail(invalid_chars[i]))) {
+          return false;
+      }
+  }
+
   return true;
 }
 
+
 bool test_is_head() {
-  // TODO: Implement this function.
+  char valid_heads[] = {'W', 'A', 'S', 'D','x'};
+  for (int i = 0; i < 5; i++)
+  {
+    if (!assert_true(&valid_heads[i], is_head(valid_heads[i])))
+    {
+      return false;
+    }
+  }
+
+  char invalid_chars[] = {'w', 'a', 's', 'd', ' ', '*', '\n'};
+  for (int i = 0; i < sizeof(invalid_chars) / sizeof(char); i++)
+  {
+    if (!assert_false(&invalid_chars[i], is_head(invalid_chars[i])))
+    {
+      return false;
+    }
+  }
   return true;
 }
 

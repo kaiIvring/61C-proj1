@@ -23,19 +23,114 @@ static void update_head(game_t *game, unsigned int snum);
 
 /* Task 1 */
 game_t *create_default_game() {
-  // TODO: Implement this function.
-  return NULL;
+  // alloc memory for game
+  game_t* game = (game_t*)malloc(sizeof(game_t));
+  if (!game)
+  {
+    return NULL;
+  }
+
+  game->num_rows = 18;
+  game->num_snakes = 1;
+
+  // initialize board
+  game->board = (char**)malloc(sizeof(char*) * game->num_rows);
+  if(!game->board)
+  {
+    free(game);
+    return NULL;
+  }
+
+  for (int i = 0; i < game->num_rows; i++)
+  {
+    game->board[i] = (char*)malloc(sizeof(char) * 22); // 20columns + '\n' + '\0'
+    if (!game->board[i])
+    {
+      for (int j = 0; j < i; j++)
+      {
+        free(game->board[j]);
+      }
+      free(game->board);
+      free(game);
+      return NULL;
+    }
+  }
+  
+  // fill in the board
+  for (int i = 0; i < game->num_rows; i++)
+  {
+    for (int j = 0; j < 20; j++)
+    {
+      if (i == 0 || i == 17 || j ==0 || j == 19)
+      {
+        game->board[i][j] = '#';
+      }
+      else
+      {
+        game->board[i][j] = ' ';
+      }
+    }
+    game->board[i][20] = '\n';
+    game->board[i][21] = '\0';
+  }
+
+  // snake body
+  game->board[2][2] = 'd';
+  game->board[2][3] = '>';
+  game->board[2][4] = 'D';
+
+  // the fruit
+  game->board[2][9] = '*';
+
+  // alloc memory for snake
+  game->snakes = (snake_t*)malloc(sizeof(snake_t));
+  if (!game->snakes)
+  {
+    for (int i = 0; i < game->num_rows; i++)
+    {
+      free(game->board[i]);
+    }
+    free(game->board);
+    free(game);
+    return NULL;
+  }
+
+  // initialize snakes, 0 represents the "0st" snake.
+  game->snakes[0].tail_col = 2;
+  game->snakes[0].tail_row = 2;
+  game->snakes[0].head_col = 4;
+  game->snakes[0].head_row = 2;
+  game->snakes[0].live = true;
+
+  return game;
 }
 
 /* Task 2 */
 void free_game(game_t *game) {
-  // TODO: Implement this function.
+
+  for (int i = 0; i < game->num_rows; i++)
+  {
+    free(game->board[i]);
+  }
+
+  free(game->board);
+  free(game->snakes);
+  free(game);
+
   return;
 }
 
 /* Task 3 */
 void print_board(game_t *game, FILE *fp) {
-  // TODO: Implement this function.
+  if (!game || !fp || !game->board)
+  {
+    return;
+  }
+
+  for (int row = 0; row < game->num_rows; row++)
+  {
+    fprintf(fp, "%s", game->board[row]);
+  }
   return;
 }
 
@@ -71,8 +166,7 @@ static void set_board_at(game_t *game, unsigned int row, unsigned int col, char 
   Returns false otherwise.
 */
 static bool is_tail(char c) {
-  // TODO: Implement this function.
-  return true;
+  return (c == 'a' || c == 'w' || c == 's' || c == 'd');
 }
 
 /*
@@ -81,8 +175,7 @@ static bool is_tail(char c) {
   Returns false otherwise.
 */
 static bool is_head(char c) {
-  // TODO: Implement this function.
-  return true;
+  return (c == 'A' || c == 'W' || c == 'S' || c == 'D' || c == 'x');
 }
 
 /*
