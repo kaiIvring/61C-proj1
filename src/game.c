@@ -425,14 +425,94 @@ void update_game(game_t *game, int (*add_food)(game_t *game)) {
 
 /* Task 5.1 */
 char *read_line(FILE *fp) {
-  // TODO: Implement this function.
-  return NULL;
+  if (!fp)
+  {
+    return NULL;
+  }
+
+  int capacity = 128;
+  char* buffer = (char*)malloc(sizeof(capacity));
+  if (!buffer)
+  {
+    return NULL;
+  }
+
+  // read line
+  int length = 0;
+  // read until reach '\n'
+  // fgets(buffer, capacity, fp);
+  if (fgets(buffer, capacity, fp) == NULL)
+  {
+    return NULL;
+  }
+  length = (int) strlen(buffer);
+  if (length == 0)
+  {
+    return NULL;
+  }
+
+  return buffer;
 }
 
 /* Task 5.2 */
 game_t *load_board(FILE *fp) {
-  // TODO: Implement this function.
-  return NULL;
+  
+  if (!fp)
+  {
+    return NULL;
+  }
+
+  char** board = NULL;
+  unsigned int num_rows = 0;
+
+  char* line;
+  while ((line = read_line(fp)) != NULL)
+  {
+    // check if it is a blank line
+    if(strlen(line) == 0 || strcmp(line, "\n") == 0)
+    {
+      free(line);
+      continue;
+    }
+    char **new_board = realloc(board, sizeof(char*) * (num_rows + 1));
+    if (!new_board)
+    {
+      free(line);
+      for (int i = 0; i < num_rows; i++)
+      {
+        free(board[i]);
+      }
+      free(board);
+      return NULL;
+    }
+    board = new_board;
+    board[num_rows] = line;
+    num_rows++;
+  }
+
+  if (num_rows == 0)
+  {
+    return NULL;
+  }
+
+  game_t* game = (game_t*) malloc(sizeof(game_t));
+  if (!game)
+  {
+    for (int i = 0; i < num_rows; i++)
+    {
+      free(board[i]);
+    }
+    free(board);
+    return NULL;
+  }
+
+  game->num_rows = num_rows;
+  game->board = board;
+  game->num_snakes = 0;
+  game->snakes = NULL;
+
+  return game;
+  
 }
 
 /*
