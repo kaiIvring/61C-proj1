@@ -384,9 +384,42 @@ static void update_tail(game_t *game, unsigned int snum) {
   return;
 }
 
+
 /* Task 4.5 */
 void update_game(game_t *game, int (*add_food)(game_t *game)) {
-  // TODO: Implement this function.
+  if (!game)
+  {
+    return;
+  }
+
+  for (unsigned int i = 0; i < game->num_snakes; i++)
+  {
+    snake_t* snake = &(game->snakes[i]);
+
+    // skip dead snakes
+    if (!snake->live)
+    {
+      continue;
+    }
+
+    char next = next_square(game, i);
+
+    if (next == '#' || is_snake(next))
+    {
+      game->board[snake->head_row][snake->head_col] = 'x';
+      snake->live = false; // snake died
+    }
+    else if (next == '*')
+    {
+      update_head(game, i);
+      add_food(game); // snake eats the fruit
+    }
+    else
+    {
+      update_head(game, i);
+      update_tail(game, i); // everything is fine, update tail
+    }
+  }
   return;
 }
 
