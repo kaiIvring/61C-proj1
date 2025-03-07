@@ -311,7 +311,36 @@ static char next_square(game_t *game, unsigned int snum) {
   Note that this function ignores food, walls, and snake bodies when moving the head.
 */
 static void update_head(game_t *game, unsigned int snum) {
-  // TODO: Implement this function.
+  if (!game || snum >= game->num_snakes)
+  {
+    return;
+  }
+  snake_t* snakes = game->snakes;
+  unsigned int s_row = snakes[snum].head_row;
+  unsigned int s_col = snakes[snum].head_col;
+
+  char head_char = get_board_at(game, s_row, s_col);
+  if (!is_head(head_char))
+  {
+    return;
+  }
+
+  unsigned int n_row = get_next_row(s_row, head_char);
+  unsigned int n_col = get_next_col(s_col, head_char);
+
+  // update board
+  if (n_row >= game->num_rows || n_col >= 20)
+  {
+    return;
+  }
+  game->board[n_row][n_col] = head_char;
+  char htb = head_to_body(head_char);
+  game->board[s_row][s_col] = htb;
+
+  // update snake_t
+  snakes[snum].head_col = n_col;
+  snakes[snum].head_row = n_row;
+
   return;
 }
 
@@ -326,7 +355,32 @@ static void update_head(game_t *game, unsigned int snum) {
   ...in the snake struct: update the row and col of the tail
 */
 static void update_tail(game_t *game, unsigned int snum) {
-  // TODO: Implement this function.
+  if (!game || snum >= game->num_snakes)
+  {
+    return;
+  }
+  snake_t* snakes = game->snakes;
+  unsigned int s_row = snakes[snum].tail_row;
+  unsigned int s_col = snakes[snum].tail_col;
+
+  char tail_char = get_board_at(game, s_row, s_col);
+  if (!is_tail(tail_char))
+  {
+    return;
+  }
+
+  unsigned int n_row = get_next_row(s_row, tail_char);
+  unsigned int n_col = get_next_col(s_col, tail_char);
+  char new_tail_char = body_to_tail(get_board_at(game, n_row, n_col));
+
+  // update board
+  game->board[n_row][n_col] = new_tail_char;
+  game->board[s_row][s_col] = ' ';
+
+  // update snake
+  snakes[snum].tail_col = n_col;
+  snakes[snum].tail_row = n_row;
+
   return;
 }
 
