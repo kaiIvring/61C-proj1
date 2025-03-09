@@ -4,6 +4,17 @@
 #include "snake_utils.h"
 #include "game.h"
 
+void print_board_stdout(game_t *game) {
+    if (!game || !game->board) {
+        fprintf(stderr, "Error: game or board is NULL\n");
+        return;
+    }
+
+    for (int i = 0; i < game->num_rows; i++) {
+        printf("%s\n", game->board[i]);  // 直接输出每一行
+    }
+}
+
 int main(int argc, char *argv[]) {
   bool io_stdin = false;
   char *in_filename = NULL;
@@ -43,28 +54,61 @@ int main(int argc, char *argv[]) {
 
   // Read board from file, or create default board
   if (in_filename != NULL) {
-    // TODO: Load the board from in_filename
-    // TODO: If the file doesn't exist, return -1
-    // TODO: Then call initialize_snakes on the game you made
-    // TODO: close file pointer
+    FILE *file = fopen(in_filename, "r");
+    if (!file)
+    {
+      perror("Error opening input file");
+      return -1;
+    }
+    game = load_board(file);
+    if (!game)
+    {
+      printf("Error: failed to initialize game\n");
+      return -1;
+    }
+    game = initialize_snakes(game);
+    if (!game)
+    {
+      printf("Error: failed to initialize snakes\n");
+      return -1;
+    }
+    fclose(file);
   } else if (io_stdin) {
-    // TODO: Load the board from stdin
-    // TODO: Then call initialize_snakes on the game you made
+    // load game
+    game = load_board(stdin);
+    if (!game)
+    {
+      printf("Error: failed to initialize game\n");
+      return -1;
+    }
+    // load snakes
+    game = initialize_snakes(game);
+    if (!game)
+    {
+      printf("Error: failed to initialize snakes\n");
+      return -1;
+    }
   } else {
-    // TODO: Create default game
+    game = create_default_game();
+    if (!game)
+    {
+      printf("Error: failed to initialize game\n");
+      return -1;
+    }
   }
 
-  // TODO: Update game. Use the deterministic_food function
-  // (already implemented in snake_utils.h) to add food.
 
+  // update game
+  update_game(game, &deterministic_food);
+  
   // Write updated board to file or stdout
   if (out_filename != NULL) {
-    // TODO: Save the board to out_filename
+    save_board(game, out_filename);
   } else {
-    // TODO: Print the board to stdout
+    save_board(game, NULL);
   }
 
-  // TODO: Free the game
+  free_game(game);
 
   return 0;
 }
